@@ -9,12 +9,14 @@ namespace Entity
 		public GameObject openState;
 		public GameObject closeState;
 		public TextMeshPro textNum;
+		public GameObject bomb;
 
 		private bool isBomb;
 		private int countBombAround;
 		private void Start()
 		{
 			textNum.text = countBombAround+"";
+			bomb.SetActive(isBomb);
 		}
 
 
@@ -23,7 +25,7 @@ namespace Entity
 			openState.SetActive(true);
 			closeState.SetActive(false);
 
-			if (countBombAround > 0)
+			if (countBombAround > 0 && !isBomb)
 			{
 				textNum.gameObject.SetActive(true);
 			}
