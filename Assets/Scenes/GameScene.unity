@@ -237,7 +237,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cell: {fileID: 7061845161542414590, guid: d57dc58ad52a14806b69f0eafee40dbd, type: 3}
-  sizeField: {x: 10, y: 10}
+  sizeField: {x: 10, y: 20}
 --- !u!4 &1917304418
 Transform:
   m_ObjectHideFlags: 0

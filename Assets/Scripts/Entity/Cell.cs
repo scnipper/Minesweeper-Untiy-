@@ -1,6 +1,7 @@
-
 using TMPro;
+using UniRx;
 using UnityEngine;
+using Util;
 
 namespace Entity
 {
@@ -13,6 +14,8 @@ namespace Entity
 
 		private bool isBomb;
 		private int countBombAround;
+		private bool isOpen;
+
 		private void Start()
 		{
 			textNum.text = countBombAround+"";
@@ -22,6 +25,21 @@ namespace Entity
 
 		private void OnMouseDown()
 		{
+
+			if (!isBomb && countBombAround == 0)
+			{
+				MessageBroker.Default.Publish(new GameMessage<Cell>(this,MessagesID.EmptyCellDown));
+			}
+			else
+			{
+				OpenCell();
+			}
+			
+		}
+
+		public void OpenCell()
+		{
+			isOpen = true;
 			openState.SetActive(true);
 			closeState.SetActive(false);
 
@@ -44,5 +62,7 @@ namespace Entity
 			get => isBomb;
 			set => isBomb = value;
 		}
+
+		public bool IsOpen => isOpen;
 	}
 }
