@@ -57,6 +57,7 @@
   </ItemGroup>
   <ItemGroup>
      <Compile Include="Assets\Scripts\Entity\Cell.cs" />
+     <Compile Include="Assets\Scripts\Entity\DragField.cs" />
      <Compile Include="Assets\Scripts\Entity\Field.cs" />
      <Compile Include="Assets\Scripts\Entity\GameMessage.cs" />
      <Compile Include="Assets\Scripts\Entity\GameScene.cs" />

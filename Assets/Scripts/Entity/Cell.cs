@@ -15,16 +15,26 @@ namespace Entity
 		private bool isBomb;
 		private int countBombAround;
 		private bool isOpen;
+		private bool isDrag;
 
 		private void Start()
 		{
 			textNum.text = countBombAround+"";
 			bomb.SetActive(isBomb);
+
+			MessageBroker.Default.Receive<GameMessage<DragField>>()
+				.Where((message => message.Id == MessagesID.IsDragging))
+				.Subscribe(message =>
+				{
+					isDrag = (bool) message.Data;
+				})
+				.AddTo(this);
 		}
 
 
-		private void OnMouseDown()
+		private void OnMouseUp()
 		{
+			if( isDrag) return;
 
 			if (!isBomb && countBombAround == 0)
 			{

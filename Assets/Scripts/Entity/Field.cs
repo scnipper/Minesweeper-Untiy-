@@ -13,9 +13,16 @@ namespace Entity
 		private Cell[][] arrCells;
 		private Vector2 sizeCell;
 		private int countRepeat;
+		private Transform saveTransform;
+		private Camera mainCamera;
+		private Vector3 worldScreen;
 
 		private void Start()
 		{
+			mainCamera = Camera.main;
+
+			worldScreen = mainCamera.ScreenToWorldPoint(new Vector2(Screen.width,Screen.height));
+			saveTransform = transform;
 			arrCells = new Cell[(int) sizeField.x][];
 			sizeCell = cell.SizeCell;
 
@@ -24,7 +31,7 @@ namespace Entity
 				arrCells[i] = new Cell[(int) sizeField.y];
 				for (int j = 0; j < sizeField.y; j++)
 				{
-					Cell _c = Instantiate(cell,transform);
+					Cell _c = Instantiate(cell,saveTransform);
 					_c.transform.position = new Vector2(sizeCell.x*i,sizeCell.y*j);
 					arrCells[i][j] = _c;
 				}
@@ -40,6 +47,39 @@ namespace Entity
 					countRepeat = 0;
 					OpenEmptyCells(message.MonoObj);
 				}).AddTo(this);
+
+			MessageBroker.Default
+				.Receive<GameMessage<DragField>>()
+				.Where(message => message.Id == MessagesID.DragField)
+				.Subscribe(message => { MoveField((Vector2) message.Data); }).AddTo(this);
+		}
+
+		private void MoveField(Vector2 delta)
+		{
+			Vector2 position = saveTransform.position;
+			position += delta * Time.deltaTime;
+
+			float offset = 1;
+			if (position.x > offset)
+			{
+				position.x = offset;
+			}
+			if (position.y > offset)
+			{
+				position.y = offset;
+			}
+			
+			if (position.x < -offset - sizeCell.x * sizeField.x + worldScreen.x)
+			{
+				position.x = -offset - sizeCell.x * sizeField.x + worldScreen.x;
+			}
+			
+			if (position.y < -offset - sizeCell.y * sizeField.y + worldScreen.y)
+			{
+				position.y = -offset - sizeCell.y * sizeField.y + worldScreen.y;
+			}
+
+			saveTransform.position = position;
 		}
 
 		private void OpenEmptyCells(Cell cell)
