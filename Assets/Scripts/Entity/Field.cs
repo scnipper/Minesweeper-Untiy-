@@ -9,6 +9,7 @@ namespace Entity
 	{
 		public Cell cell;
 		public Vector2 sizeField;
+		public Vector2 rangeBombs = new Vector2(10,20);
 
 		private Cell[][] arrCells;
 		private Vector2 sizeCell;
@@ -16,6 +17,7 @@ namespace Entity
 		private Transform saveTransform;
 		private Camera mainCamera;
 		private Vector3 worldScreen;
+		
 
 		private void Start()
 		{
@@ -23,13 +25,15 @@ namespace Entity
 
 			worldScreen = mainCamera.ScreenToWorldPoint(new Vector2(Screen.width,Screen.height));
 			saveTransform = transform;
-			arrCells = new Cell[(int) sizeField.x][];
 			sizeCell = cell.SizeCell;
 
-			CreateCells();
+			
 
-			SettingBombs();
-
+			MessageBroker.Default
+				.Receive<GameMessage<GameScene>>()
+				.Where(message => message.Id == MessagesID.StartGame)
+				.Subscribe(StartGame)
+				.AddTo(this);
 			MessageBroker.Default
 				.Receive<GameMessage<Cell>>()
 				.Where(message => message.Id == MessagesID.EmptyCellDown)
@@ -43,6 +47,21 @@ namespace Entity
 				.Receive<GameMessage<DragField>>()
 				.Where(message => message.Id == MessagesID.DragField)
 				.Subscribe(message => { MoveField((Vector2) message.Data); }).AddTo(this);
+		}
+
+		private void StartGame(GameMessage<GameScene> message)
+		{
+			transform.RemoveAllChildren();
+
+			DiffGame diff = (DiffGame) message.Data;
+
+			sizeField = diff.SizeFiled;
+			rangeBombs = diff.RangeMines;
+			arrCells = new Cell[(int) sizeField.x][];
+
+			CreateCells();
+
+			SettingBombs();
 		}
 
 		private void CreateCells()
@@ -205,7 +224,7 @@ namespace Entity
 
 		private void SettingBombs()
 		{
-			int bombCount = Random.Range(20,30);
+			int bombCount = Random.Range((int)rangeBombs.x,(int)rangeBombs.y);
 
 			
 			do

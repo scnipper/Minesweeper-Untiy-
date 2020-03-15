@@ -57,10 +57,12 @@
   </ItemGroup>
   <ItemGroup>
      <Compile Include="Assets\Scripts\Entity\Cell.cs" />
+     <Compile Include="Assets\Scripts\Entity\DiffGame.cs" />
      <Compile Include="Assets\Scripts\Entity\DragField.cs" />
      <Compile Include="Assets\Scripts\Entity\Field.cs" />
      <Compile Include="Assets\Scripts\Entity\GameMessage.cs" />
      <Compile Include="Assets\Scripts\Entity\GameScene.cs" />
+     <Compile Include="Assets\Scripts\Util\Extensions.cs" />
      <Compile Include="Assets\Scripts\Util\MessagesID.cs" />
      <None Include="Assets\TextMesh Pro\Resources\Shaders\TMP_SDF-Surface-Mobile.shader" />
      <None Include="Assets\TextMesh Pro\Resources\LineBreaking Leading Characters.txt" />
