@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UniRx;
 using UnityEngine;
 using Util;
@@ -43,105 +44,117 @@ namespace Entity
 
 		private void OpenEmptyCells(Cell cell)
 		{
+			var cells = new Stack<Cell>();
 
-			if(cell.IsOpen) return;
-			
-			cell.OpenCell();
-			if(cell.CountBombAround > 0) return;
-			
-			Vector2 pos = cell.transform.position / sizeCell;
 
-			int xPos = (int) pos.x;
-			int yPos = (int) pos.y;
+			cells.Push(cell);
 			
-			int left = xPos - 1;
-			int right = xPos + 1;
-			int top = yPos + 1;
-			int bottom = yPos - 1;
-			
-			// слева
-			if (left >= 0)
+			while (cells.Count > 0)
 			{
-				Cell c = arrCells[left][yPos];
-				if (!c.IsBomb  && !c.IsOpen)
-				{
-					OpenEmptyCells(c);
-				}
-			}
-			
-			// справа
-			if (right < sizeField.x)
-			{
-				Cell c = arrCells[right][yPos];
-				if (!c.IsBomb && !c.IsOpen)
-				{
-					OpenEmptyCells(c);
-				}
-			}
-			
-			//сверху
+				Cell innerCell = cells.Pop();
 
-			if (top < sizeField.y)
-			{
-				Cell c = arrCells[xPos][top];
-				if (!c.IsBomb && !c.IsOpen)
+				if (innerCell.IsOpen) continue;
+
+				innerCell.OpenCell();
+				if (innerCell.CountBombAround > 0) continue;
+
+				Vector2 pos = innerCell.transform.position / sizeCell;
+
+				int xPos = (int) pos.x;
+				int yPos = (int) pos.y;
+
+				int left = xPos - 1;
+				int right = xPos + 1;
+				int top = yPos + 1;
+				int bottom = yPos - 1;
+
+				// слева
+				if (left >= 0)
 				{
-					OpenEmptyCells(c);
+					Cell c = arrCells[left][yPos];
+					if (!c.IsBomb && !c.IsOpen)
+					{
+						cells.Push(c);
+					}
 				}
-			}
-			//снизу
-			if (bottom >=0)
-			{
-				Cell c = arrCells[xPos][bottom];
-				if (!c.IsBomb && !c.IsOpen)
+
+				// справа
+				if (right < sizeField.x)
 				{
-					OpenEmptyCells(c);
+					Cell c = arrCells[right][yPos];
+					if (!c.IsBomb && !c.IsOpen)
+					{
+						cells.Push(c);
+					}
 				}
-			}
-			//слева снизу
-			if (left >= 0 && bottom >=0)
-			{
-				Cell c = arrCells[left][bottom];
-				if (!c.IsBomb && !c.IsOpen)
+
+				//сверху
+
+				if (top < sizeField.y)
 				{
-					OpenEmptyCells(c);
+					Cell c = arrCells[xPos][top];
+					if (!c.IsBomb && !c.IsOpen)
+					{
+						cells.Push(c);
+					}
 				}
-			}
-			// слева сверху
-			if (left >= 0 && top < sizeField.y)
-			{
-				Cell c = arrCells[left][top];
-				if (!c.IsBomb && !c.IsOpen)
+
+				//снизу
+				if (bottom >= 0)
 				{
-					OpenEmptyCells(c);
+					Cell c = arrCells[xPos][bottom];
+					if (!c.IsBomb && !c.IsOpen)
+					{
+						cells.Push(c);
+					}
 				}
+
+				//слева снизу
+				if (left >= 0 && bottom >= 0)
+				{
+					Cell c = arrCells[left][bottom];
+					if (!c.IsBomb && !c.IsOpen)
+					{
+						cells.Push(c);
+					}
+				}
+
+				// слева сверху
+				if (left >= 0 && top < sizeField.y)
+				{
+					Cell c = arrCells[left][top];
+					if (!c.IsBomb && !c.IsOpen)
+					{
+						cells.Push(c);
+					}
+				}
+
+
+
+
+				//справа снизу
+				if (right < sizeField.x && bottom >= 0)
+				{
+					Cell c = arrCells[right][bottom];
+					if (!c.IsBomb && !c.IsOpen)
+					{
+						cells.Push(c);
+					}
+				}
+
+				// справа сверху
+				if (right < sizeField.x && top < sizeField.y)
+				{
+					Cell c = arrCells[right][top];
+					if (!c.IsBomb && !c.IsOpen)
+					{
+						cells.Push(c);
+					}
+				}
+
 			}
 
-			
-			
-			
-			//справа снизу
-			if (right < sizeField.x && bottom >=0)
-			{
-				Cell c = arrCells[right][bottom];
-				if (!c.IsBomb && !c.IsOpen)
-				{
-					OpenEmptyCells(c);
-				}
-			}
-			// справа сверху
-			if (right < sizeField.x && top < sizeField.y)
-			{
-				Cell c = arrCells[right][top];
-				if (!c.IsBomb && !c.IsOpen)
-				{
-					OpenEmptyCells(c);
-				}
-			}
-			
-			
-			
-			
+
 		}
 
 		private void SettingBombs()
