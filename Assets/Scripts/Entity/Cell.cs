@@ -17,6 +17,7 @@ namespace Entity
 		private bool isOpen;
 		private bool isDrag;
 		private Vector2 posInField;
+		private bool isLock;
 
 		private void Start()
 		{
@@ -30,20 +31,32 @@ namespace Entity
 					isDrag = (bool) message.Data;
 				})
 				.AddTo(this);
+			MessageBroker.Default
+				.Receive<GameMessage<Cell>>()
+				.Where(message => message.Id == MessagesID.GameOver)
+				.Subscribe(message => { isLock = true; })
+				.AddTo(this);
 		}
 
 
 		private void OnMouseUp()
 		{
-			if( isDrag) return;
+			if (isDrag || isLock) return;
 
-			if (!isBomb && countBombAround == 0)
+		if (!isBomb && countBombAround == 0)
 			{
 				MessageBroker.Default.Publish(new GameMessage<Cell>(this,MessagesID.EmptyCellDown));
 			}
 			else
 			{
 				OpenCell();
+			}
+
+			if (isBomb)
+			{
+				isLock = true;
+				MessageBroker.Default
+					.Publish(new GameMessage<Cell>(this,MessagesID.GameOver));
 			}
 			
 		}
