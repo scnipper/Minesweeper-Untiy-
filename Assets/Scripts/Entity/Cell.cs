@@ -16,6 +16,7 @@ namespace Entity
 		private int countBombAround;
 		private bool isOpen;
 		private bool isDrag;
+		private Vector2 posInField;
 
 		private void Start()
 		{
@@ -74,5 +75,11 @@ namespace Entity
 		}
 
 		public bool IsOpen => isOpen;
+
+		public Vector2 PosInField
+		{
+			get => posInField;
+			set => posInField = value;
+		}
 	}
 }

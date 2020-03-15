@@ -26,16 +26,7 @@ namespace Entity
 			arrCells = new Cell[(int) sizeField.x][];
 			sizeCell = cell.SizeCell;
 
-			for (int i = 0; i < sizeField.x; i++)
-			{
-				arrCells[i] = new Cell[(int) sizeField.y];
-				for (int j = 0; j < sizeField.y; j++)
-				{
-					Cell _c = Instantiate(cell,saveTransform);
-					_c.transform.position = new Vector2(sizeCell.x*i,sizeCell.y*j);
-					arrCells[i][j] = _c;
-				}
-			}
+			CreateCells();
 
 			SettingBombs();
 
@@ -52,6 +43,21 @@ namespace Entity
 				.Receive<GameMessage<DragField>>()
 				.Where(message => message.Id == MessagesID.DragField)
 				.Subscribe(message => { MoveField((Vector2) message.Data); }).AddTo(this);
+		}
+
+		private void CreateCells()
+		{
+			for (int i = 0; i < sizeField.x; i++)
+			{
+				arrCells[i] = new Cell[(int) sizeField.y];
+				for (int j = 0; j < sizeField.y; j++)
+				{
+					Cell _c = Instantiate(cell,saveTransform);
+					_c.PosInField = new Vector2(i,j);
+					_c.transform.position = new Vector2(sizeCell.x*i,sizeCell.y*j);
+					arrCells[i][j] = _c;
+				}
+			}
 		}
 
 		private void MoveField(Vector2 delta)
@@ -98,7 +104,7 @@ namespace Entity
 				innerCell.OpenCell();
 				if (innerCell.CountBombAround > 0) continue;
 
-				Vector2 pos = innerCell.transform.position / sizeCell;
+				Vector2 pos = innerCell.PosInField;
 
 				int xPos = (int) pos.x;
 				int yPos = (int) pos.y;
