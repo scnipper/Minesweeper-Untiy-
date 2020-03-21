@@ -9,24 +9,23 @@ namespace Entity
 	{
 		public Cell cell;
 		public Vector2 sizeField;
-		public Vector2 rangeBombs = new Vector2(10,20);
+		public Vector2 rangeBombs = new Vector2(10, 20);
 
 		private Cell[][] arrCells;
 		private Vector2 sizeCell;
 		private Transform saveTransform;
 		private Camera mainCamera;
 		private Vector3 worldScreen;
-		
+
 
 		private void Start()
 		{
 			mainCamera = Camera.main;
 
-			worldScreen = mainCamera.ScreenToWorldPoint(new Vector2(Screen.width,Screen.height));
+			worldScreen = mainCamera.ScreenToWorldPoint(new Vector2(Screen.width, Screen.height));
 			saveTransform = transform;
 			sizeCell = cell.SizeCell;
 
-			
 
 			MessageBroker.Default
 				.Receive<GameMessage>()
@@ -41,16 +40,13 @@ namespace Entity
 			MessageBroker.Default
 				.Receive<GameMessage>()
 				.Where(message => message.Id == MessagesID.EmptyCellDown)
-				.Subscribe(message =>
-				{
-					OpenEmptyCells((Cell) message.Data);
-				}).AddTo(this);
+				.Subscribe(message => { OpenEmptyCells((Cell) message.Data); }).AddTo(this);
 
 			MessageBroker.Default
 				.Receive<GameMessage>()
 				.Where(message => message.Id == MessagesID.DragField)
 				.Subscribe(message => { MoveField((Vector2) message.Data); }).AddTo(this);
-			
+
 			MessageBroker.Default
 				.Receive<GameMessage>()
 				.Where(message => message.Id == MessagesID.GameOver || message.Id == MessagesID.WinGame)
@@ -71,9 +67,12 @@ namespace Entity
 				}
 			}
 		}
+
 		private void StartGame(GameMessage message)
 		{
-			transform.RemoveAllChildren();
+			saveTransform.position = new Vector3();
+
+			saveTransform.RemoveAllChildren();
 
 			DiffGame diff = (DiffGame) message.Data;
 
@@ -93,9 +92,9 @@ namespace Entity
 				arrCells[i] = new Cell[(int) sizeField.y];
 				for (int j = 0; j < sizeField.y; j++)
 				{
-					Cell _c = Instantiate(cell,saveTransform);
-					_c.PosInField = new Vector2(i,j);
-					_c.transform.position = new Vector2(sizeCell.x*i,sizeCell.y*j);
+					Cell _c = Instantiate(cell, saveTransform);
+					_c.PosInField = new Vector2(i, j);
+					_c.transform.position = new Vector2(sizeCell.x * i, sizeCell.y * j);
 					arrCells[i][j] = _c;
 				}
 			}
@@ -111,19 +110,33 @@ namespace Entity
 			{
 				position.x = offset;
 			}
+
 			if (position.y > offset)
 			{
 				position.y = offset;
 			}
-			
-			if (position.x < -offset - sizeCell.x * sizeField.x + worldScreen.x)
+
+			float sizeFieldX = sizeCell.x * sizeField.x;
+			if (sizeFieldX < worldScreen.x)
 			{
-				position.x = -offset - sizeCell.x * sizeField.x + worldScreen.x;
+				sizeFieldX += worldScreen.x - sizeFieldX;
+
 			}
-			
-			if (position.y < -offset - sizeCell.y * sizeField.y + worldScreen.y)
+
+			if (position.x < -offset - sizeFieldX + worldScreen.x)
 			{
-				position.y = -offset - sizeCell.y * sizeField.y + worldScreen.y;
+				position.x = -offset - sizeFieldX + worldScreen.x;
+			}
+
+			float sizeFieldY = sizeCell.y * sizeField.y;
+			if (sizeFieldY < worldScreen.y)
+			{
+				sizeFieldY += worldScreen.y - sizeFieldY;
+			}
+
+			if (position.y < -offset - sizeFieldY + worldScreen.y)
+			{
+				position.y = -offset - sizeFieldY + worldScreen.y;
 			}
 
 			saveTransform.position = position;
@@ -135,7 +148,7 @@ namespace Entity
 
 
 			cells.Push(cell);
-			
+
 			while (cells.Count > 0)
 			{
 				Cell innerCell = cells.Pop();
@@ -217,8 +230,6 @@ namespace Entity
 				}
 
 
-
-
 				//справа снизу
 				if (right < sizeField.x && bottom >= 0)
 				{
@@ -238,10 +249,7 @@ namespace Entity
 						cells.Push(c);
 					}
 				}
-
 			}
-			
-
 		}
 
 		private void CheckWinGame(GameMessage message)
@@ -259,34 +267,34 @@ namespace Entity
 				}
 			}
 
-			
+
 			MessageBroker.Default.Publish(new GameMessage(MessagesID.WinGame));
 		}
 
 		private void SettingBombs()
 		{
-			int bombCount = Random.Range((int)rangeBombs.x,(int)rangeBombs.y);
+			int bombCount = Random.Range((int) rangeBombs.x, (int) rangeBombs.y);
 
-			
+
 			do
 			{
 				int xRandom = (int) Random.Range(0, sizeField.x);
 				int yRandom = (int) Random.Range(0, sizeField.y);
 
 				Cell randomCell = arrCells[xRandom][yRandom];
-				if(randomCell.IsBomb) continue;
-				
+				if (randomCell.IsBomb) continue;
+
 				randomCell.IsBomb = true;
 				bombCount--;
 			} while (bombCount > 0);
-			
+
 			for (var i = 0; i < arrCells.Length; i++)
 			{
 				for (int j = 0; j < arrCells[i].Length; j++)
 				{
 					if (arrCells[i][j].IsBomb)
 					{
-						CalcAroundBomb(i,j);
+						CalcAroundBomb(i, j);
 					}
 				}
 			}
@@ -298,61 +306,65 @@ namespace Entity
 			int right = xPos + 1;
 			int top = yPos + 1;
 			int bottom = yPos - 1;
-			
+
 			// слева
 			if (left >= 0)
 			{
-				BombAround(left,yPos);
+				BombAround(left, yPos);
 			}
+
 			//слева снизу
-			if (left >= 0 && bottom >=0)
+			if (left >= 0 && bottom >= 0)
 			{
-				BombAround(left,bottom);
+				BombAround(left, bottom);
 			}
+
 			// слева сверху
 			if (left >= 0 && top < sizeField.y)
 			{
-				BombAround(left,top);
+				BombAround(left, top);
 			}
 
-			
-			
+
 			// справа
 			if (right < sizeField.x)
 			{
-				BombAround(right,yPos);
+				BombAround(right, yPos);
 			}
+
 			//справа снизу
-			if (right < sizeField.x && bottom >=0)
+			if (right < sizeField.x && bottom >= 0)
 			{
-				BombAround(right,bottom);
+				BombAround(right, bottom);
 			}
+
 			// справа сверху
 			if (right < sizeField.x && top < sizeField.y)
 			{
-				BombAround(right,top);
+				BombAround(right, top);
 			}
-			
-			
+
+
 			//сверху
 
 			if (top < sizeField.y)
 			{
-				BombAround(xPos,top);
+				BombAround(xPos, top);
 			}
+
 			//снизу
-			if (bottom >=0)
+			if (bottom >= 0)
 			{
-				BombAround(xPos,bottom);
+				BombAround(xPos, bottom);
 			}
 		}
 
-		private void BombAround(int xPos,int yPos)
+		private void BombAround(int xPos, int yPos)
 		{
 			int countBomb = 0;
 			Cell currCell = arrCells[xPos][yPos];
 
-			if(currCell.CountBombAround > 0) return;
+			if (currCell.CountBombAround > 0) return;
 
 			int left = xPos - 1;
 			int right = xPos + 1;
@@ -365,12 +377,14 @@ namespace Entity
 				if (arrCells[left][yPos].IsBomb)
 					countBomb++;
 			}
+
 			//слева снизу
-			if (left >= 0 && bottom >=0)
+			if (left >= 0 && bottom >= 0)
 			{
 				if (arrCells[left][bottom].IsBomb)
 					countBomb++;
 			}
+
 			// слева сверху
 			if (left >= 0 && top < sizeField.y)
 			{
@@ -378,28 +392,29 @@ namespace Entity
 					countBomb++;
 			}
 
-			
-			
+
 			// справа
 			if (right < sizeField.x)
 			{
 				if (arrCells[right][yPos].IsBomb)
 					countBomb++;
 			}
+
 			//справа снизу
-			if (right < sizeField.x && bottom >=0)
+			if (right < sizeField.x && bottom >= 0)
 			{
 				if (arrCells[right][bottom].IsBomb)
 					countBomb++;
 			}
+
 			// справа сверху
 			if (right < sizeField.x && top < sizeField.y)
 			{
 				if (arrCells[right][top].IsBomb)
 					countBomb++;
 			}
-			
-			
+
+
 			//сверху
 
 			if (top < sizeField.y)
@@ -407,16 +422,15 @@ namespace Entity
 				if (arrCells[xPos][top].IsBomb)
 					countBomb++;
 			}
+
 			//снизу
-			if (bottom >=0)
+			if (bottom >= 0)
 			{
 				if (arrCells[xPos][bottom].IsBomb)
 					countBomb++;
 			}
 
 			currCell.CountBombAround = countBomb;
-
-
 		}
 	}
 }

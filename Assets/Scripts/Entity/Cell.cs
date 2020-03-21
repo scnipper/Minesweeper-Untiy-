@@ -55,7 +55,7 @@ namespace Entity
 		{
 			float time = 0;
 
-			while (time < 0.3f)
+			while (time < 0.2f)
 			{
 				time += Time.deltaTime;
 				yield return null;
