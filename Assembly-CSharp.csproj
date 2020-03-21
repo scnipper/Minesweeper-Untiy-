@@ -62,6 +62,7 @@
      <Compile Include="Assets\Scripts\Entity\Field.cs" />
      <Compile Include="Assets\Scripts\Entity\GameMessage.cs" />
      <Compile Include="Assets\Scripts\Entity\GameScene.cs" />
+     <Compile Include="Assets\Scripts\Entity\GameTimer.cs" />
      <Compile Include="Assets\Scripts\Util\Extensions.cs" />
      <Compile Include="Assets\Scripts\Util\MessagesID.cs" />
      <None Include="Assets\TextMesh Pro\Resources\Shaders\TMP_SDF-Surface-Mobile.shader" />
