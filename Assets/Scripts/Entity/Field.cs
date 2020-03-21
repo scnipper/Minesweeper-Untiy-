@@ -30,26 +30,26 @@ namespace Entity
 			
 
 			MessageBroker.Default
-				.Receive<GameMessage<GameScene>>()
+				.Receive<GameMessage>()
 				.Where(message => message.Id == MessagesID.StartGame)
 				.Subscribe(StartGame)
 				.AddTo(this);
 			MessageBroker.Default
-				.Receive<GameMessage<Cell>>()
+				.Receive<GameMessage>()
 				.Where(message => message.Id == MessagesID.EmptyCellDown)
 				.Subscribe(message =>
 				{
 					countRepeat = 0;
-					OpenEmptyCells(message.MonoObj);
+					OpenEmptyCells((Cell) message.Data);
 				}).AddTo(this);
 
 			MessageBroker.Default
-				.Receive<GameMessage<DragField>>()
+				.Receive<GameMessage>()
 				.Where(message => message.Id == MessagesID.DragField)
 				.Subscribe(message => { MoveField((Vector2) message.Data); }).AddTo(this);
 		}
 
-		private void StartGame(GameMessage<GameScene> message)
+		private void StartGame(GameMessage message)
 		{
 			transform.RemoveAllChildren();
 

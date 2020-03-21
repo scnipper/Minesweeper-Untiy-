@@ -24,7 +24,7 @@ namespace Entity
 			textNum.text = countBombAround+"";
 			bomb.SetActive(isBomb);
 
-			MessageBroker.Default.Receive<GameMessage<DragField>>()
+			MessageBroker.Default.Receive<GameMessage>()
 				.Where((message => message.Id == MessagesID.IsDragging))
 				.Subscribe(message =>
 				{
@@ -32,7 +32,7 @@ namespace Entity
 				})
 				.AddTo(this);
 			MessageBroker.Default
-				.Receive<GameMessage<Cell>>()
+				.Receive<GameMessage>()
 				.Where(message => message.Id == MessagesID.GameOver)
 				.Subscribe(message => { isLock = true; })
 				.AddTo(this);
@@ -45,7 +45,7 @@ namespace Entity
 
 		if (!isBomb && countBombAround == 0)
 			{
-				MessageBroker.Default.Publish(new GameMessage<Cell>(this,MessagesID.EmptyCellDown));
+				MessageBroker.Default.Publish(new GameMessage(MessagesID.EmptyCellDown,this));
 			}
 			else
 			{
@@ -56,7 +56,7 @@ namespace Entity
 			{
 				isLock = true;
 				MessageBroker.Default
-					.Publish(new GameMessage<Cell>(this,MessagesID.GameOver));
+					.Publish(new GameMessage(MessagesID.GameOver,this));
 			}
 			
 		}

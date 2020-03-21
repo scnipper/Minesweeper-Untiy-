@@ -1,24 +1,15 @@
-using UnityEngine;
 
 namespace Entity
 {
-	public class GameMessage<T>  where T : MonoBehaviour
+	public class GameMessage
 	{
-		private T monoObj;
 		private int id;
 		private object data;
 
-		public GameMessage(T monoObj, int id, object data = null)
+		public GameMessage(int id, object data = null)
 		{
-			this.monoObj = monoObj;
 			this.id = id;
 			this.data = data;
-		}
-
-		public T MonoObj
-		{
-			get => monoObj;
-			set => monoObj = value;
 		}
 
 		public int Id

@@ -14,7 +14,7 @@ namespace Entity
 		private void Start()
 		{
 			MessageBroker.Default
-				.Receive<GameMessage<Cell>>()
+				.Receive<GameMessage>()
 				.Where(message => message.Id == MessagesID.GameOver)
 				.Subscribe(message => {gameOverState.SetActive(true); })
 				.AddTo(this);
@@ -38,7 +38,7 @@ namespace Entity
 					break;
 			}
 			MessageBroker.Default
-				.Publish(new GameMessage<GameScene>(this,MessagesID.StartGame,diffGame));
+				.Publish(new GameMessage(MessagesID.StartGame,diffGame));
 		}
 
 

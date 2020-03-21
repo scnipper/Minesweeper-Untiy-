@@ -7,11 +7,11 @@ namespace Entity
 {
 	public class DragField : MonoBehaviour,IDragHandler,IBeginDragHandler,IEndDragHandler
 	{
-		private GameMessage<DragField> messageDrag;
+		private GameMessage messageDrag;
 
 		private void Start()
 		{
-			messageDrag = new GameMessage<DragField>(this,MessagesID.DragField,new Vector2());
+			messageDrag = new GameMessage(MessagesID.DragField,new Vector2());
 		}
 
 		public void OnDrag(PointerEventData eventData)
