@@ -10,6 +10,7 @@ namespace Entity
 	{
 		private Text timeText;
 		private Coroutine tickRoutine;
+		public static int time;
 
 		private void Start()
 		{
@@ -36,8 +37,8 @@ namespace Entity
 		}
 
 		private IEnumerator TickTime()
-		{
-			long time = 0;
+		{ 
+			time = 0;
 
 			while (true)
 			{

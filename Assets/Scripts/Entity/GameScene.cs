@@ -1,5 +1,6 @@
 ﻿using UniRx;
 using UnityEngine;
+using UnityEngine.UI;
 using Util;
 
 namespace Entity
@@ -7,16 +8,26 @@ namespace Entity
 	public class GameScene : MonoBehaviour
 	{
 		public GameObject gameOverState;
+		public GameObject winGameState;
 		public GameObject startState;
 		
 	
-		// Start is called before the first frame update
 		private void Start()
 		{
 			MessageBroker.Default
 				.Receive<GameMessage>()
 				.Where(message => message.Id == MessagesID.GameOver)
 				.Subscribe(message => {gameOverState.SetActive(true); })
+				.AddTo(this);
+			
+			MessageBroker.Default
+				.Receive<GameMessage>()
+				.Where(message => message.Id == MessagesID.WinGame)
+				.Subscribe(message =>
+				{
+					winGameState.SetActive(true);
+					winGameState.transform.Find("Score").GetComponent<Text>().text = "Your time: " + GameTimer.time;
+				})
 				.AddTo(this);
 		}
 
@@ -45,6 +56,7 @@ namespace Entity
 		public void InMenu()
 		{
 			gameOverState.SetActive(false);
+			winGameState.SetActive(false);
 			startState.SetActive(true);
 		}
 	

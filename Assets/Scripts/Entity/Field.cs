@@ -13,7 +13,6 @@ namespace Entity
 
 		private Cell[][] arrCells;
 		private Vector2 sizeCell;
-		private int countRepeat;
 		private Transform saveTransform;
 		private Camera mainCamera;
 		private Vector3 worldScreen;
@@ -36,10 +35,14 @@ namespace Entity
 				.AddTo(this);
 			MessageBroker.Default
 				.Receive<GameMessage>()
+				.Where(message => message.Id == MessagesID.CheckWinGame)
+				.Subscribe(CheckWinGame)
+				.AddTo(this);
+			MessageBroker.Default
+				.Receive<GameMessage>()
 				.Where(message => message.Id == MessagesID.EmptyCellDown)
 				.Subscribe(message =>
 				{
-					countRepeat = 0;
 					OpenEmptyCells((Cell) message.Data);
 				}).AddTo(this);
 
@@ -50,7 +53,7 @@ namespace Entity
 			
 			MessageBroker.Default
 				.Receive<GameMessage>()
-				.Where(message => message.Id == MessagesID.GameOver)
+				.Where(message => message.Id == MessagesID.GameOver || message.Id == MessagesID.WinGame)
 				.Subscribe(OpenAllBombs)
 				.AddTo(this);
 		}
@@ -237,8 +240,27 @@ namespace Entity
 				}
 
 			}
+			
 
+		}
 
+		private void CheckWinGame(GameMessage message)
+		{
+			for (var i = 0; i < arrCells.Length; i++)
+			{
+				for (var j = 0; j < arrCells[i].Length; j++)
+				{
+					var c = arrCells[i][j];
+
+					if (!c.IsOpen && !c.IsBomb)
+					{
+						return;
+					}
+				}
+			}
+
+			
+			MessageBroker.Default.Publish(new GameMessage(MessagesID.WinGame));
 		}
 
 		private void SettingBombs()

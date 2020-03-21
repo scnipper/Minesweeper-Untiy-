@@ -35,7 +35,7 @@ namespace Entity
 				.AddTo(this);
 			MessageBroker.Default
 				.Receive<GameMessage>()
-				.Where(message => message.Id == MessagesID.GameOver)
+				.Where(message => message.Id == MessagesID.GameOver || message.Id == MessagesID.WinGame)
 				.Subscribe(message => { isLock = true; })
 				.AddTo(this);
 		}
@@ -107,6 +107,10 @@ namespace Entity
 				isLock = true;
 				MessageBroker.Default
 					.Publish(new GameMessage(MessagesID.GameOver, this));
+			}
+			else
+			{
+				MessageBroker.Default.Publish(new GameMessage(MessagesID.CheckWinGame, this));
 			}
 		}
 

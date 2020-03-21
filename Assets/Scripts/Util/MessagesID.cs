@@ -8,6 +8,7 @@ namespace Util
 		public const int GameOver      = 1004;
 		public const int WinGame       = 1006;
 		public const int StartGame     = 1005;
+		public const int CheckWinGame  = 1007;
 	}
 	
 }
