@@ -137,7 +137,7 @@ namespace Entity
 				if (left >= 0)
 				{
 					Cell c = arrCells[left][yPos];
-					if (!c.IsBomb && !c.IsOpen)
+					if (!c.IsBomb && !c.IsOpen && !c.IsFlagged)
 					{
 						cells.Push(c);
 					}
@@ -147,7 +147,7 @@ namespace Entity
 				if (right < sizeField.x)
 				{
 					Cell c = arrCells[right][yPos];
-					if (!c.IsBomb && !c.IsOpen)
+					if (!c.IsBomb && !c.IsOpen && !c.IsFlagged)
 					{
 						cells.Push(c);
 					}
@@ -158,7 +158,7 @@ namespace Entity
 				if (top < sizeField.y)
 				{
 					Cell c = arrCells[xPos][top];
-					if (!c.IsBomb && !c.IsOpen)
+					if (!c.IsBomb && !c.IsOpen && !c.IsFlagged)
 					{
 						cells.Push(c);
 					}
@@ -168,7 +168,7 @@ namespace Entity
 				if (bottom >= 0)
 				{
 					Cell c = arrCells[xPos][bottom];
-					if (!c.IsBomb && !c.IsOpen)
+					if (!c.IsBomb && !c.IsOpen && !c.IsFlagged)
 					{
 						cells.Push(c);
 					}
@@ -178,7 +178,7 @@ namespace Entity
 				if (left >= 0 && bottom >= 0)
 				{
 					Cell c = arrCells[left][bottom];
-					if (!c.IsBomb && !c.IsOpen)
+					if (!c.IsBomb && !c.IsOpen && !c.IsFlagged)
 					{
 						cells.Push(c);
 					}
@@ -188,7 +188,7 @@ namespace Entity
 				if (left >= 0 && top < sizeField.y)
 				{
 					Cell c = arrCells[left][top];
-					if (!c.IsBomb && !c.IsOpen)
+					if (!c.IsBomb && !c.IsOpen && !c.IsFlagged)
 					{
 						cells.Push(c);
 					}
@@ -201,7 +201,7 @@ namespace Entity
 				if (right < sizeField.x && bottom >= 0)
 				{
 					Cell c = arrCells[right][bottom];
-					if (!c.IsBomb && !c.IsOpen)
+					if (!c.IsBomb && !c.IsOpen && !c.IsFlagged)
 					{
 						cells.Push(c);
 					}
@@ -211,7 +211,7 @@ namespace Entity
 				if (right < sizeField.x && top < sizeField.y)
 				{
 					Cell c = arrCells[right][top];
-					if (!c.IsBomb && !c.IsOpen)
+					if (!c.IsBomb && !c.IsOpen && !c.IsFlagged)
 					{
 						cells.Push(c);
 					}

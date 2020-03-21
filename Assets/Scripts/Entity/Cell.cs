@@ -1,3 +1,4 @@
+using System.Collections;
 using TMPro;
 using UniRx;
 using UnityEngine;
@@ -11,25 +12,26 @@ namespace Entity
 		public GameObject closeState;
 		public TextMeshPro textNum;
 		public GameObject bomb;
+		public GameObject flag;
 
 		private bool isBomb;
+		private bool isFlagged;
 		private int countBombAround;
 		private bool isOpen;
 		private bool isDrag;
 		private Vector2 posInField;
 		private bool isLock;
+		private bool isStartTap;
+		private bool oneLock;
 
 		private void Start()
 		{
-			textNum.text = countBombAround+"";
+			textNum.text = countBombAround + "";
 			bomb.SetActive(isBomb);
 
 			MessageBroker.Default.Receive<GameMessage>()
 				.Where((message => message.Id == MessagesID.IsDragging))
-				.Subscribe(message =>
-				{
-					isDrag = (bool) message.Data;
-				})
+				.Subscribe(message => { isDrag = (bool) message.Data; })
 				.AddTo(this);
 			MessageBroker.Default
 				.Receive<GameMessage>()
@@ -39,13 +41,61 @@ namespace Entity
 		}
 
 
+		private void OnMouseDown()
+		{
+			if (!isOpen)
+			{
+				isStartTap = true;
+				MainThreadDispatcher.StartUpdateMicroCoroutine(LongTap());
+			}
+			
+		}
+
+		private IEnumerator LongTap()
+		{
+			float time = 0;
+
+			while (time < 0.3f)
+			{
+				time += Time.deltaTime;
+				yield return null;
+			}
+
+			if (isStartTap && !isDrag)
+			{
+				SetFlag(true);
+				oneLock = true;
+			}
+
+			yield return null;
+		}
+
+		private void SetFlag(bool isFlag)
+		{
+			isFlagged = isFlag;
+			flag.SetActive(isFlag);
+		}
+
 		private void OnMouseUp()
 		{
+			isStartTap = false;
+
+			if (oneLock)
+			{
+				oneLock = false;
+				return;
+			}
+			if (isFlagged)
+			{
+				SetFlag(false);
+				return;
+			}
 			if (isDrag || isLock) return;
 
-		if (!isBomb && countBombAround == 0)
+
+			if (!isBomb && countBombAround == 0)
 			{
-				MessageBroker.Default.Publish(new GameMessage(MessagesID.EmptyCellDown,this));
+				MessageBroker.Default.Publish(new GameMessage(MessagesID.EmptyCellDown, this));
 			}
 			else
 			{
@@ -56,9 +106,8 @@ namespace Entity
 			{
 				isLock = true;
 				MessageBroker.Default
-					.Publish(new GameMessage(MessagesID.GameOver,this));
+					.Publish(new GameMessage(MessagesID.GameOver, this));
 			}
-			
 		}
 
 		public void OpenCell()
@@ -73,7 +122,8 @@ namespace Entity
 			}
 		}
 
-		public Vector2 SizeCell => openState.transform.GetChild(0).GetComponent<SpriteRenderer>().size * transform.localScale;
+		public Vector2 SizeCell =>
+			openState.transform.GetChild(0).GetComponent<SpriteRenderer>().size * transform.localScale;
 
 		public int CountBombAround
 		{
@@ -88,6 +138,8 @@ namespace Entity
 		}
 
 		public bool IsOpen => isOpen;
+
+		public bool IsFlagged => isFlagged;
 
 		public Vector2 PosInField
 		{
