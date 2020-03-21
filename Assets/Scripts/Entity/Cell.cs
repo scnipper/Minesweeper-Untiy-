@@ -61,7 +61,7 @@ namespace Entity
 				yield return null;
 			}
 
-			if (isStartTap && !isDrag)
+			if (isStartTap && !isDrag && !isLock)
 			{
 				SetFlag(true);
 				oneLock = true;
@@ -116,6 +116,11 @@ namespace Entity
 			openState.SetActive(true);
 			closeState.SetActive(false);
 
+			if (isFlagged)
+			{
+				// show cross on bomb
+				bomb.transform.GetChild(0).gameObject.SetActive(true);
+			}
 			if (countBombAround > 0 && !isBomb)
 			{
 				textNum.gameObject.SetActive(true);

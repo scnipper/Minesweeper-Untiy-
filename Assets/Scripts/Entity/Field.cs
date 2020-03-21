@@ -47,8 +47,27 @@ namespace Entity
 				.Receive<GameMessage>()
 				.Where(message => message.Id == MessagesID.DragField)
 				.Subscribe(message => { MoveField((Vector2) message.Data); }).AddTo(this);
+			
+			MessageBroker.Default
+				.Receive<GameMessage>()
+				.Where(message => message.Id == MessagesID.GameOver)
+				.Subscribe(OpenAllBombs)
+				.AddTo(this);
 		}
 
+		private void OpenAllBombs(GameMessage message)
+		{
+			for (var i = 0; i < arrCells.Length; i++)
+			{
+				for (var j = 0; j < arrCells[i].Length; j++)
+				{
+					if (arrCells[i][j].IsBomb)
+					{
+						arrCells[i][j].OpenCell();
+					}
+				}
+			}
+		}
 		private void StartGame(GameMessage message)
 		{
 			transform.RemoveAllChildren();
